@@ -70,7 +70,6 @@ set authentication_handler = sync_spawn @scripts_dir/auth.py
 @on_event   LOAD_COMMIT    @set_status <span foreground="green">recv</span>
 @on_event   LOAD_COMMIT    script @scripts_dir/flashblock.js
 
-
 # Load finish handlers
 @on_event   LOAD_FINISH    @set_status <span foreground="gold">done</span>
 @on_event   LOAD_FINISH    spawn @scripts_dir/history.sh
@@ -163,7 +162,12 @@ set ebind     = @mode_bind global,-insert
 @on_event  ESCAPE    @set_mode
 @bind   <Escape>     = event ESCAPE
 @bind   <Ctrl>[      = event ESCAPE
-#@bind   <Super>      = sh ''
+@on_event   LOAD_COMMIT    spawn @scripts_dir/adblock.py
+@on_event   LOAD_COMMIT    spawn @scripts_dir/noscript.py
+@on_event   LOAD_COMMIT    spawn @scripts_dir/noplugin.py
+
+@on_event   LOAD_PROGRESS  js uzblAdBlock();
+#@on_event   REQUEST_STARTING  spawn @scripts_dir/noscript.py
 
 # Commands for editing and traversing the keycmd.
 @ebind  <Return>     = event KEYCMD_EXEC_CURRENT
@@ -192,6 +196,14 @@ set ebind     = @mode_bind global,-insert
 @cbind    :_        = %s
 
 set default_encoding = UTF-8
+#set disable_scripts = 1
+@cbind ds  = set disable_scripts = 1
+@cbind es  = set disable_scripts = 0
+@cbind dp  = set disable_plugins = 1
+@cbind ep  = set disable_plugins = 0
+
+@cbind \\as = spawn @scripts_dir/adddomain.py 'scripton'
+@cbind \\ap = spawn @scripts_dir/adddomain.py 'pluginon'
 
 @cbind  \\c         = spawn @scripts_dir/encoding.sh
 
@@ -292,6 +304,7 @@ set default_encoding = UTF-8
 # raised by uzbl-core:
 #@cbind  <Ctrl><Alt>t  = sh 'xterm -e "socat unix-connect:$5 -"'
 @cbind  <Ctrl><Alt>t  = sh 'terminal -e socat unix-connect:$5 -'
+@cbind  <Ctrl><Alt>l  = sh 'echo "socat unix-connect:$5 -" | xsel -i'
 
 # Uri opening prompts
 @cbind  o<uri:>_       = uri %s
@@ -342,14 +355,17 @@ set default_encoding = UTF-8
 
 @cbind  gan         = uri http://animuchan.net
 @cbind  пфт         = uri http://animuchan.net
-@cbind  ghb         = uri http://habrahabr.ru
-@cbind  при         = uri http://habrahabr.ru
+@cbind  ghab         = uri http://habrahabr.ru
+@cbind  прфи         = uri http://habrahabr.ru
 
 @cbind   gjb        = uri http://djbook.ru/index.html
 @cbind   пои        = uri http://djbook.ru/index.html
 
 @cbind   gba        = uri http://baaaka.ru
 @cbind   пиф        = uri http://baaaka.ru
+
+@cbind   gal        = uri http://alug.org.ru/forum/
+@cbind   пфд        = uri http://alug.org.ru/forum/
 
 # Yanking & pasting binds
 @cbind  yu  = sh 'echo -n $6 | xsel -i'
