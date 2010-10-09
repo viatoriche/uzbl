@@ -57,21 +57,24 @@ set authentication_handler = sync_spawn @scripts_dir/auth.py
 # Download handler
 #@on_event   DOWNLOAD_REQUEST    spawn @scripts_dir/download.sh %s \@proxy_url
 @on_event   DOWNLOAD_REQUEST    spawn @scripts_dir/download.sh %s \@proxy_url
+@on_event   SAVE_REQUEST        spawn @scripts_dir/save.sh \@proxy_url
 @on_event   YANK                sh "echo '%s' | xsel -i"
 @on_event   YANK_URL            sh "echo $6 | xsel -i"
 
 
 # Load start handler
-@on_event   LOAD_START     @set_status <span foreground="khaki">wait</span>
+@on_event   LOAD_START     @set_status <span foreground="#969894"> ] <span foreground="#e9b96e">? </span></span>
 # Reset the keycmd on navigation
 @on_event   LOAD_START     @set_mode
 
 # Load commit handlers
-@on_event   LOAD_COMMIT    @set_status <span foreground="green">recv</span>
+@on_event   LOAD_COMMIT    @set_status <span foreground="#969894"> ] <span foreground="#e9b96e">=\></span> </span>
 @on_event   LOAD_COMMIT    script @scripts_dir/flashblock.js
+#@on_event   LOAD_COMMIT    @on_event   LOAD_COMMIT    spawn @scripts_dir/adblock.py
+
 
 # Load finish handlers
-@on_event   LOAD_FINISH    @set_status <span foreground="gold">done</span>
+@on_event   LOAD_FINISH    @set_status <span foreground="#969894"> ] </span>
 @on_event   LOAD_FINISH    spawn @scripts_dir/history.sh
 
 # Switch to insert mode if a (editable) html form is clicked
@@ -82,31 +85,34 @@ set authentication_handler = sync_spawn @scripts_dir/auth.py
 # Example CONFIG_CHANGED event handler
 #@on_event  CONFIG_CHANGED print Config changed: %1 = %2
 
+set proxy_url = http://10.6.6.1:8118
+
 # === Behaviour and appearance ===============================================
 
 set show_status       = 1
 set status_top        = 1
-set status_background = #303030
+set status_background = #2e3436
 
 set modcmd_style      = weight="bold" foreground="red"
-set keycmd_style      = weight="light" foreground="red"
-set prompt_style      = foreground="grey"
+set keycmd_style      = weight="light" foreground="#e9b96e"
+set prompt_style      = foreground="#969894"
 set cursor_style      = underline="single"
-set completion_style  = foreground="green"
+set completion_style  = foreground="#e9b96e"
 set hint_style        = weight="bold"
 
-set mode_section      = <span background="khaki" foreground="black">[\@[\@mode_indicator]\@]</span>
-set keycmd_section    = [<span \@prompt_style>\@[\@keycmd_prompt]\@</span><span \@modcmd_style>\@modcmd</span><span \@keycmd_style>\@keycmd</span><span \@completion_style>\@completion_list</span>]
-set progress_section  = <span foreground="#606060">\@[\@progress.output]\@</span>
-set scroll_section    = <span foreground="#606060">\@[\@scroll_message]\@</span>
-set uri_section       = <span foreground="#99FF66">\@[\@uri]\@</span>
-set name_section      = <span foreground="khaki">\@[\@NAME]\@</span>
-set status_section    = <span foreground="orange">\@status_message</span>
-set selected_section  = <span foreground="#606060">\@[\@SELECTED_URI]\@</span>
+set mode_section      = <span foreground="#e9b96e">\@[\@mode_indicator]\@</span>
+set keycmd_section    = <span foreground="#969894"><span \@prompt_style>\@[\@keycmd_prompt]\@</span><span \@modcmd_style>\@modcmd</span><span \@keycmd_style>\@keycmd</span><span \@completion_style>\@completion_list</span> [ </span>
+set progress_section  = <span foreground="#969894">\@[\@progress.output]\@</span>
+set scroll_section    = <span foreground="#e9b96e">\@[\@scroll_message]\@</span>
+set uri_section       = <span foreground="#619fcf">\@[\@uri]\@</span>
+set name_section      = <span foreground="#969894">\@[\@NAME]\@</span>
+set status_section    = <span foreground="#e9b96e">\@status_message</span>
+set selected_section  = <span foreground="#619fcf">\@[\@SELECTED_URI]\@</span>
 
-set status_format     = <span font_family="Terminus">@mode_section @keycmd_section @progress_section @uri_section @name_section @status_section @scroll_section @selected_section</span>
+#set status_format     = <span font_family="Terminus">@mode_section@keycmd_section@progress_section @uri_section @name_section @status_section @scroll_section @selected_section</span>
+set status_format     = <span font_family="Terminus">@mode_section@keycmd_section@uri_section@status_section@progress_section @selected_section</span>
 
-set title_format_long = \@keycmd_prompt \@raw_modcmd \@raw_keycmd \@TITLE - Uzbl browser <\@NAME> \@SELECTED_URI
+set title_format_long = \@keycmd_prompt \@raw_modcmd \@raw_keycmd \@TITLE - Uzbl browser \@SELECTED_URI
 
 # Progress bar config
 # %d = done, %p = pending %c = percent done, %i = int done, %s = spinner,
@@ -162,11 +168,11 @@ set ebind     = @mode_bind global,-insert
 @on_event  ESCAPE    @set_mode
 @bind   <Escape>     = event ESCAPE
 @bind   <Ctrl>[      = event ESCAPE
-@on_event   LOAD_COMMIT    spawn @scripts_dir/adblock.py
+#@on_event   LOAD_COMMIT    spawn @scripts_dir/adblock.py
 @on_event   LOAD_COMMIT    spawn @scripts_dir/noscript.py
 @on_event   LOAD_COMMIT    spawn @scripts_dir/noplugin.py
 
-@on_event   LOAD_PROGRESS  js uzblAdBlock();
+#@on_event   LOAD_PROGRESS  js uzblAdBlock();
 #@on_event   REQUEST_STARTING  spawn @scripts_dir/noscript.py
 
 # Commands for editing and traversing the keycmd.
@@ -193,10 +199,17 @@ set ebind     = @mode_bind global,-insert
 
 # With this command you can enter in any command at runtime when prefixed with
 # a colon.
-@cbind    :_        = %s
+@cbind    :< :>_        = spawn @scripts_dir/cmd.py "%s"
+@cbind    Ж< :>_        = spawn @scripts_dir/cmd.py "%s"
 
 set default_encoding = UTF-8
 #set disable_scripts = 1
+#
+@cbind \\u1 = set useragent         = Uzbl (Webkit @{WEBKIT_MAJOR}.@{WEBKIT_MINOR}.@{WEBKIT_MICRO}) (@(+uname -sm)@ [@ARCH_UZBL]) (Commit @COMMIT)
+@cbind \\u2 = set useragent         = Mozilla/5.0 (X11; U; Linux i686; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.459.0 Safari/534.3
+@cbind \\г1 = set useragent         = Uzbl (Webkit @{WEBKIT_MAJOR}.@{WEBKIT_MINOR}.@{WEBKIT_MICRO}) (@(+uname -sm)@ [@ARCH_UZBL]) (Commit @COMMIT)
+@cbind \\г2 = set useragent         = Mozilla/5.0 (X11; U; Linux i686; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.459.0 Safari/534.3
+
 @cbind ds  = set disable_scripts = 1
 @cbind es  = set disable_scripts = 0
 @cbind dp  = set disable_plugins = 1
@@ -205,7 +218,27 @@ set default_encoding = UTF-8
 @cbind \\as = spawn @scripts_dir/adddomain.py 'scripton'
 @cbind \\ap = spawn @scripts_dir/adddomain.py 'pluginon'
 
+@cbind вы  = set disable_scripts = 1
+@cbind уы  = set disable_scripts = 0
+@cbind вз  = set disable_plugins = 1
+@cbind уз  = set disable_plugins = 0
+
+@cbind \\фы = spawn @scripts_dir/adddomain.py 'scripton'
+@cbind \\фз = spawn @scripts_dir/adddomain.py 'pluginon'
+
 @cbind  \\c         = spawn @scripts_dir/encoding.sh
+@cbind  \\с         = spawn @scripts_dir/encoding.sh
+
+@cbind  \\eb        = set proxy_url = http://10.6.6.1:8118
+@cbind  \\db        = set proxy_url = 
+@cbind  \\уи        = set proxy_url = http://10.6.6.1:8118
+@cbind  \\ви        = set proxy_url = 
+
+@cbind  gpv        = uri http://config.privoxy.org/show-status
+@cbind  пзм        = uri http://config.privoxy.org/show-status
+
+@cbind  gtp       = sh "browser 'http://config.privoxy.org/toggle?mini=y&set=toggle'"
+@cbind  пез       = sh "browser 'http://config.privoxy.org/toggle?mini=y&set=toggle'"
 
 # Page movement binds
 @cbind  j            = scroll vertical 10%
@@ -219,11 +252,11 @@ set default_encoding = UTF-8
 @cbind  <Ctrl>f      = scroll vertical 100%
 @cbind  K            = scroll vertical -100%
 @cbind  J            = scroll vertical 100%
-@cbind  <<           = scroll vertical begin
-@cbind  >>           = scroll vertical end
+@cbind  <           = scroll vertical begin
+@cbind  >           = scroll vertical end
 @cbind  G            = scroll vertical end
-@cbind  ^            = scroll horizontal begin
-@cbind  $            = scroll horizontal end
+@cbind  <Home>       = scroll vertical begin
+@cbind  <End>        = scroll vertical end
 @cbind  <Space>      = scroll vertical end
 #Rus
 @cbind  о            = scroll vertical 10%
@@ -234,11 +267,9 @@ set default_encoding = UTF-8
 @cbind  <Ctrl>а      = scroll vertical 100%
 @cbind  Л            = scroll vertical -100%
 @cbind  О            = scroll vertical 100%
-@cbind  ББ           = scroll vertical begin
-@cbind  ЮЮ           = scroll vertical end
+@cbind  Б           = scroll vertical begin
+@cbind  Ю           = scroll vertical end
 @cbind  П            = scroll vertical end
-@cbind  :            = scroll horizontal begin
-@cbind  ;            = scroll horizontal end
 
 @cbind  <Up>         = scroll vertical -10%
 @cbind  <Down>       = scroll vertical 10%
@@ -305,6 +336,11 @@ set default_encoding = UTF-8
 #@cbind  <Ctrl><Alt>t  = sh 'xterm -e "socat unix-connect:$5 -"'
 @cbind  <Ctrl><Alt>t  = sh 'terminal -e socat unix-connect:$5 -'
 @cbind  <Ctrl><Alt>l  = sh 'echo "socat unix-connect:$5 -" | xsel -i'
+@cbind  <Ctrl><Alt>f  = sh 'echo "$4" | xsel -i'
+
+@cbind  <Ctrl><Alt>е  = sh 'terminal -e socat unix-connect:$5 -'
+@cbind  <Ctrl><Alt>д  = sh 'echo "socat unix-connect:$5 -" | xsel -i'
+@cbind  <Ctrl><Alt>а  = sh 'echo "$4" | xsel -i'
 
 # Uri opening prompts
 @cbind  o<uri:>_       = uri %s
@@ -335,15 +371,15 @@ set default_encoding = UTF-8
 @cbind  пда         = uri http://local.via-net.org/files/
 @cbind  ghs         = uri http://haskell.org
 @cbind  пры         = uri http://haskell.org
-@cbind  gp          = uri http://docs.python.org
-@cbind  пз          = uri http://docs.python.org
+@cbind  gpd         = uri http://docs.python.org
+@cbind  пзв         = uri http://docs.python.org
 @cbind  gdс         = uri http://dobrochan.ru
 @cbind  пвс         = uri http://dobrochan.ru
 
 @cbind  gjg         = uri http://jailbaitgallery.com/youngest.php?age=1
 @cbind  поп         = uri http://jailbaitgallery.com/youngest.php?age=1
-@cbind  gt          = uri http://translate.google.ru
-@cbind  пе          = uri http://translate.google.ru
+@cbind  gtg         = uri http://translate.google.ru
+@cbind  пеп         = uri http://translate.google.ru
 @cbind  gfu         = uri http://fffuuu.ru
 @cbind  паг         = uri http://fffuuu.ru
 @cbind  gmv         = uri http://mail.via-net.org
@@ -366,6 +402,15 @@ set default_encoding = UTF-8
 
 @cbind   gal        = uri http://alug.org.ru/forum/
 @cbind   пфд        = uri http://alug.org.ru/forum/
+
+@cbind   gtbv       = uri http://www.fasttorrent.ru/film/teoriya-bolshogo-vzryva.html
+@cbind   пеим       = uri http://www.fasttorrent.ru/film/teoriya-bolshogo-vzryva.html
+
+@cbind   glt        = uri http://local.via-net.org/rtorrent/
+@cbind   пде        = uri http://local.via-net.org/rtorrent/
+
+@cbind   gos        = uri http://opensharing.org/
+@cbind   пщы        = uri http://opensharing.org/
 
 # Yanking & pasting binds
 @cbind  yu  = sh 'echo -n $6 | xsel -i'
@@ -517,16 +562,17 @@ set insert   = @mode_config insert
 set stack    = @mode_config stack
 
 # Command mode config.
-@command  keycmd_style        = foreground="red"
-@command  status_background   = #202020
-@command  mode_indicator      = $
+@command  keycmd_style        = foreground="#e9b96e"
+@command  status_background   = #2e3436 
+@command  mode_indicator      = 
 @command  keycmd_events       = 1
 @command  forward_keys        = 0
 @command  modcmd_updates      = 1
 
 # Insert mode config.
-@insert   status_background   = #303030
-@insert   mode_indicator      = %
+@insert   keycmd_style        = foreground="red"
+@insert   status_background   = brown
+@insert   mode_indicator      = 
 @insert   forward_keys        = 1
 @insert   keycmd_events       = 0
 @insert   modcmd_updates      = 0
@@ -535,16 +581,16 @@ set stack    = @mode_config stack
 @stack    keycmd_events       = 1
 @stack    modcmd_updates      = 1
 @stack    forward_keys        = 0
-@stack    keycmd_style        = foreground="red"
-@stack    prompt_style        = foreground="#888" weight="light"
-@stack    status_background   = #202020
-@stack    mode_indicator      = \#
+@stack    keycmd_style        = foreground="white"
+@stack    prompt_style        = foreground="#e9b96e" weight="light"
+@stack    status_background   = #2e3436
+@stack    mode_indicator      = 
 
 set default_mode = command
 
 # === Post-load misc commands ================================================
 
 # Set the "home" page.
-set uri = uzbl.org/doesitwork/@COMMIT
+set uri = http://google.ru
 
 # vim: set fdm=syntax:
