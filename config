@@ -63,19 +63,21 @@ set authentication_handler = sync_spawn @scripts_dir/auth.py
 
 
 # Load start handler
-@on_event   LOAD_START     @set_status <span foreground="#969894"> ] <span foreground="#e9b96e">? </span></span>
+@on_event   LOAD_START     @set_status <span foreground="#969894"> <span foreground="#e9b96e">? </span></span>
 # Reset the keycmd on navigation
 @on_event   LOAD_START     @set_mode
 
 # Load commit handlers
-@on_event   LOAD_COMMIT    @set_status <span foreground="#969894"> ] <span foreground="#e9b96e">=\></span> </span>
+@on_event   LOAD_COMMIT    @set_status <span foreground="#969894"> <span foreground="#e9b96e">=\></span> </span>
 @on_event   LOAD_COMMIT    script @scripts_dir/flashblock.js
+#@on_event   LOAD_COMMIT    spawn @scripts_dir/set_title.sh
 #@on_event   LOAD_COMMIT    @on_event   LOAD_COMMIT    spawn @scripts_dir/adblock.py
 
 
 # Load finish handlers
-@on_event   LOAD_FINISH    @set_status <span foreground="#969894"> ] </span>
+@on_event   LOAD_FINISH    @set_status <span foreground="#969894"> </span>
 @on_event   LOAD_FINISH    spawn @scripts_dir/history.sh
+@on_event   LOAD_FINISH    spawn @scripts_dir/set_title.sh
 
 # Switch to insert mode if a (editable) html form is clicked
 @on_event   FORM_ACTIVE    @set_mode insert
@@ -101,16 +103,17 @@ set completion_style  = foreground="#e9b96e"
 set hint_style        = weight="bold"
 
 set mode_section      = <span foreground="#e9b96e">\@[\@mode_indicator]\@</span>
-set keycmd_section    = <span foreground="#969894"><span \@prompt_style>\@[\@keycmd_prompt]\@</span><span \@modcmd_style>\@modcmd</span><span \@keycmd_style>\@keycmd</span><span \@completion_style>\@completion_list</span> [ </span>
+set keycmd_section    = <span foreground="#969894"><span \@prompt_style>\@[\@keycmd_prompt]\@</span><span \@modcmd_style>\@modcmd</span><span \@keycmd_style>\@keycmd</span><span \@completion_style>\@completion_list</span>\:</span>
 set progress_section  = <span foreground="#969894">\@[\@progress.output]\@</span>
 set scroll_section    = <span foreground="#e9b96e">\@[\@scroll_message]\@</span>
 set uri_section       = <span foreground="#619fcf">\@[\@uri]\@</span>
 set name_section      = <span foreground="#969894">\@[\@NAME]\@</span>
 set status_section    = <span foreground="#e9b96e">\@status_message</span>
 set selected_section  = <span foreground="#619fcf">\@[\@SELECTED_URI]\@</span>
+set title_section     = <span foreground="#969894"><span foreground="#EEEEEE">\@[\@cool_title]\@</span>\:</span>
 
 #set status_format     = <span font_family="Terminus">@mode_section@keycmd_section@progress_section @uri_section @name_section @status_section @scroll_section @selected_section</span>
-set status_format     = <span font_family="Terminus">@mode_section@keycmd_section@uri_section@status_section@progress_section @selected_section</span>
+set status_format     = <span font_family="Terminus">@title_section@mode_section@keycmd_section@uri_section@status_section@progress_section @selected_section</span>
 
 set title_format_long = \@keycmd_prompt \@raw_modcmd \@raw_keycmd \@TITLE - Uzbl browser \@SELECTED_URI
 
