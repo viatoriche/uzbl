@@ -19,6 +19,6 @@ test "x$title" = "x" && {
     title='\ ';
 }
 
-echo "set cool_title=`cutstr $title 15`" | socat - unix-connect:$socket
+echo "set cool_title = `cutstr $title 15`" | socat - unix-connect:$socket
 
 

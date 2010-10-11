@@ -172,8 +172,12 @@ set ebind     = @mode_bind global,-insert
 @bind   <Escape>     = event ESCAPE
 @bind   <Ctrl>[      = event ESCAPE
 #@on_event   LOAD_COMMIT    spawn @scripts_dir/adblock.py
+@on_event   LOAD_START    spawn @scripts_dir/noscript.py
+@on_event   LOAD_START    spawn @scripts_dir/noplugin.py
+#@on_event   LOAD_START    spawn @scripts_dir/noproxy.py
 @on_event   LOAD_COMMIT    spawn @scripts_dir/noscript.py
 @on_event   LOAD_COMMIT    spawn @scripts_dir/noplugin.py
+#@on_event   LOAD_COMMIT    spawn @scripts_dir/noproxy.py
 
 #@on_event   LOAD_PROGRESS  js uzblAdBlock();
 #@on_event   REQUEST_STARTING  spawn @scripts_dir/noscript.py
@@ -208,6 +212,10 @@ set ebind     = @mode_bind global,-insert
 set default_encoding = UTF-8
 #set disable_scripts = 1
 #
+
+@cbind \\h = uri $XDG_DATA_HOME/uzbl/help.html
+@cbind \\р = uri $XDG_DATA_HOME/uzbl/help.html
+
 @cbind \\u1 = set useragent         = Uzbl (Webkit @{WEBKIT_MAJOR}.@{WEBKIT_MINOR}.@{WEBKIT_MICRO}) (@(+uname -sm)@ [@ARCH_UZBL]) (Commit @COMMIT)
 @cbind \\u2 = set useragent         = Mozilla/5.0 (X11; U; Linux i686; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.459.0 Safari/534.3
 @cbind \\г1 = set useragent         = Uzbl (Webkit @{WEBKIT_MAJOR}.@{WEBKIT_MINOR}.@{WEBKIT_MICRO}) (@(+uname -sm)@ [@ARCH_UZBL]) (Commit @COMMIT)
@@ -220,6 +228,7 @@ set default_encoding = UTF-8
 
 @cbind \\as = spawn @scripts_dir/adddomain.py 'scripton'
 @cbind \\ap = spawn @scripts_dir/adddomain.py 'pluginon'
+#@cbind \\ib = spawn @scripts_dir/adddomain.py 'proxyoff'
 
 @cbind вы  = set disable_scripts = 1
 @cbind уы  = set disable_scripts = 0
@@ -228,6 +237,7 @@ set default_encoding = UTF-8
 
 @cbind \\фы = spawn @scripts_dir/adddomain.py 'scripton'
 @cbind \\фз = spawn @scripts_dir/adddomain.py 'pluginon'
+#@cbind \\ши = spawn @scripts_dir/adddomain.py 'proxyoff'
 
 @cbind  \\c         = spawn @scripts_dir/encoding.sh
 @cbind  \\с         = spawn @scripts_dir/encoding.sh
