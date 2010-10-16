@@ -47,7 +47,11 @@ def parse_config():
 def main(url, fifo):
     domains = parse_config()
     domain = get_domain(url)
-    fh = open(fifo, "w")
+    try:
+        fh = open(fifo, "w")
+    except:
+        sys.stdout.write(fifo+' can\' be write')
+        return
     if domain in domains:
         fh.write('set disable_plugins = 0\n')
     else:
