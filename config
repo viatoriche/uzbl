@@ -66,10 +66,12 @@ set authentication_handler = sync_spawn @scripts_dir/auth.py
 @on_event   LOAD_START     @set_status <span foreground="#969894"> <span foreground="#e9b96e">? </span></span>
 # Reset the keycmd on navigation
 @on_event   LOAD_START     @set_mode
+@on_event   LOAD_START    spawn @scripts_dir/set_uri.py
 
 # Load commit handlers
 @on_event   LOAD_COMMIT    @set_status <span foreground="#969894"> <span foreground="#e9b96e">=\></span> </span>
 @on_event   LOAD_COMMIT    script @scripts_dir/flashblock.js
+@on_event   LOAD_COMMIT    spawn @scripts_dir/set_uri.py
 #@on_event   LOAD_COMMIT    spawn @scripts_dir/set_title.sh
 #@on_event   LOAD_COMMIT    @on_event   LOAD_COMMIT    spawn @scripts_dir/adblock.py
 
@@ -78,6 +80,7 @@ set authentication_handler = sync_spawn @scripts_dir/auth.py
 @on_event   LOAD_FINISH    @set_status <span foreground="#969894"> </span>
 @on_event   LOAD_FINISH    spawn @scripts_dir/history.sh
 @on_event   LOAD_FINISH    spawn @scripts_dir/set_title.sh
+@on_event   LOAD_FINISH    spawn @scripts_dir/set_uri.py
 
 # Switch to insert mode if a (editable) html form is clicked
 @on_event   FORM_ACTIVE    @set_mode insert
@@ -87,7 +90,7 @@ set authentication_handler = sync_spawn @scripts_dir/auth.py
 # Example CONFIG_CHANGED event handler
 #@on_event  CONFIG_CHANGED print Config changed: %1 = %2
 
-set proxy_url = http://10.6.6.1:8118
+set proxy_url = http://10.7.7.1:8118
 
 # === Behaviour and appearance ===============================================
 
@@ -106,7 +109,7 @@ set mode_section      = <span foreground="#e9b96e">\@[\@mode_indicator]\@</span>
 set keycmd_section    = <span foreground="#969894"><span \@prompt_style>\@[\@keycmd_prompt]\@</span><span \@modcmd_style>\@modcmd</span><span \@keycmd_style>\@keycmd</span><span \@completion_style>\@completion_list</span>\:</span>
 set progress_section  = <span foreground="#969894">\@[\@progress.output]\@</span>
 set scroll_section    = <span foreground="#e9b96e">\@[\@scroll_message]\@</span>
-set uri_section       = <span foreground="#619fcf">\@[\@uri]\@</span>
+set uri_section       = <span foreground="#619fcf">\@[\@cool_uri]\@</span>
 set name_section      = <span foreground="#969894">\@[\@NAME]\@</span>
 set status_section    = <span foreground="#e9b96e">\@status_message</span>
 set selected_section  = <span foreground="#619fcf">\@[\@SELECTED_URI]\@</span>
