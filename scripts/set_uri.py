@@ -63,7 +63,8 @@ def main(url, fifo):
     except:
         sys.stdout.write(fifo+' can\' be write')
         return
-    fh.write('set cool_uri = %s%s\n' % (domain, cut_str(url.split(domain)[1], 15)))
+    if domain != '':
+        fh.write('set cool_uri = %s%s\n' % (domain, cut_str(url.split(domain)[1], 15)))
     fh.close()
 
 if __name__ == "__main__":

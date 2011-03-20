@@ -19,4 +19,4 @@ book2html >> $file
 echo '</body>' >> $file
 echo '</HTML>' >> $file
 
-echo "uri $file" | socat - unix-connect:$5
+echo "uri file:///$file" | socat - unix-connect:$5
